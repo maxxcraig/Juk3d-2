@@ -1,0 +1,113 @@
+# Environment variables
+.env
+.env.local
+.env.production
+.env.test
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Node.js / React Native
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs
+*.log
+
+# API Keys and Secrets
+config.json
+secrets.json
+*.pem
+*.key
+
+# Claude AI Development Notes
+CLAUDE.md
+claude.md
+*.claude.md
+
+# AI Generated Content Indicators
+.ai_generated
+ai_notes/
+claude_notes/
+assistant_notes/
+
+# Development Notes
+TODO.md
+NOTES.md
+dev_notes.md
+
+# Temporary Development Files
+temp/
+tmp/
+scratch/
+test_output/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
