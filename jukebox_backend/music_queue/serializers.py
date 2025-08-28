@@ -25,4 +25,4 @@ class AddToQueueSerializer(serializers.Serializer):
     duration = serializers.IntegerField()
     album_art_url = serializers.URLField(required=False)
     is_paid = serializers.BooleanField(default=False)
-    payment_token = serializers.CharField(max_length=255, required=False)  # Stripe token
+    payment_method_id = serializers.CharField(max_length=255, required=False)  # Stripe payment method ID

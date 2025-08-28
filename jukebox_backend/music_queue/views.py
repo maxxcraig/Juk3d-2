@@ -4,9 +4,14 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from decimal import Decimal
+import stripe
+import os
 from .models import QueueItem, CurrentlyPlaying
 from venues.models import Venue, Song
 from .serializers import QueueItemSerializer, CurrentlyPlayingSerializer, AddToQueueSerializer
+
+# Configure Stripe
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
 @api_view(['GET'])
 def venue_queue(request, venue_id):
@@ -46,17 +51,17 @@ def add_to_queue(request, venue_id):
     
     # Handle payment if paid song
     if data.get('is_paid', False):
-        payment_token = data.get('payment_token')
-        if not payment_token:
+        payment_method_id = data.get('payment_method_id')
+        if not payment_method_id:
             return Response({
-                'error': 'Payment token required for paid songs'
+                'error': 'Payment method required for paid songs'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Placeholder for Stripe payment processing
-        payment_success = process_payment(payment_token, Decimal('1.00'))
+        # Process real Stripe payment
+        payment_success = process_payment(payment_method_id, Decimal('1.00'))
         if not payment_success:
             return Response({
-                'error': 'Payment failed - Stripe integration pending'
+                'error': 'Payment failed. Please check your card and try again.'
             }, status=status.HTTP_400_BAD_REQUEST)
     
     # Get or create song
@@ -84,13 +89,43 @@ def add_to_queue(request, venue_id):
         'queue_item': QueueItemSerializer(queue_item).data
     }, status=status.HTTP_201_CREATED)
 
-def process_payment(payment_token, amount):
+def process_payment(payment_method_id, amount):
     """
-    Placeholder function for Stripe payment processing
-    Will be implemented when Stripe credentials are provided
+    Process payment using Stripe API
     """
-    # Mock payment success for development
-    return True
+    # Handle demo payment for web
+    if payment_method_id == 'pm_demo_web_payment':
+        print("Demo payment processed successfully")
+        return True
+        
+    try:
+        # Create payment intent
+        payment_intent = stripe.PaymentIntent.create(
+            amount=int(amount * 100),  # Convert to cents
+            currency='usd',
+            payment_method=payment_method_id,
+            confirmation_method='manual',
+            confirm=True,
+            return_url='http://localhost:8081',  # Your app URL
+        )
+        
+        if payment_intent.status == 'succeeded':
+            return True
+        elif payment_intent.status == 'requires_action':
+            # Handle 3D Secure or other authentication
+            return False
+        else:
+            return False
+            
+    except stripe.error.CardError as e:
+        print(f"Card error: {e}")
+        return False
+    except stripe.error.StripeError as e:
+        print(f"Stripe error: {e}")
+        return False
+    except Exception as e:
+        print(f"Payment processing error: {e}")
+        return False
 
 @api_view(['POST'])
 def next_song(request, venue_id):
